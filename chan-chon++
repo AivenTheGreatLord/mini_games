@@ -1,0 +1,149 @@
+f = open('input.txt', 'r').read().split('\n')
+
+
+#ints = {}
+floats = {}
+#booleans = {}
+strings = {}
+arrays = {}
+
+go_to = -1
+skip_condition = False
+
+if f[0] != 'ching chon chang chi ching chan chi chuo':
+    print('1982年12月4日第五届全国人民代表大会第五次会议通过1982年12月4日全国人民代表大会公告公布施行根据1988年4月12日第七届全国人民代表大会第一次会议通过的《中华人民共和国宪法修正案》、1993年3月29日第八届全国人民代表大会第一次会议通过的《中华人民共和国宪法修正案》、1999年3月15日第九届全国人民代表大会第二次会议通过的《中华人民共和国宪法修正案》和2004年3月14日第十届全国人民代表大会第二次会议通过的《中华人民共和国宪法修正案》修正）')
+else:
+    i = 1
+    while i < len(f):
+        command = f[i].split()
+        #hue hua pian ping suo
+        if len(command) == 0:
+            pass
+        elif command[0] == 'hui':
+            for j in range(1, len(command), 3):
+                floats[command[j]] = float(command[j + 2][:-1])
+        elif command[0] == 'xi_cheng':
+            for j in range(1, len(command), 3):
+                strings[command[j]] = command[j + 2][:-1][1:-1]
+        
+        elif command[0] == 'shuru':                     #input
+            
+            
+            a = input()
+            command[-1] = command[-1][:-1]
+
+            if command[-1][-1] == ']':
+                #print( command[1][:command[1].index('[')] )
+                #print(command[1][command[1].index('[') + 1] )
+                arrays[ command[1][:command[1].index('[')] ][ int(floats[command[1][command[1].index('[') + 1]]) ]  = int(a)
+                i += 1
+                continue
+
+            try:
+                floats[command[1]] = float(a)
+                
+            except BaseException:
+                try:
+                    strings[command[1]] = a
+                except BaseException:
+                    pass
+            
+            
+        
+        elif command[0] == 'dayin':                         #print
+            
+            command[-1] = command[-1][:-1]
+
+            if command[-1][-1] == ']':
+                #print( command[1][:command[1].index('[')] )
+                #print(command[1][command[1].index('[') + 1] )
+                print(arrays[ command[1][:command[1].index('[')] ][ int(floats[command[1][command[1].index('[') + 1]]) ])
+                #arrays[ command[1][:command[1].index('[')] ][ int(floats[command[1][command[1].index('[') + 1]]) ]  = int(a)
+                i += 1
+                continue
+            elif  command[-1] in list(arrays.keys()):
+                print(arrays[command[-1]])
+                i += 1
+                continue
+
+            if command[-1][-1] == ']':
+                print(arrays[ command[1][:command[1].index('[')] ][ int(command[1][command[1].index('[') + 1] )])
+                i += 1
+                continue
+
+            try:
+                print(strings[command[1]])
+            except BaseException:
+                pass
+            try:
+                print(floats[command[1]])
+            except BaseException:
+                pass
+            
+        
+        elif command[0] == 'guodu':             #go to
+            sh = command[2:]
+            sh[-1] = sh[-1][0:-1]
+            for aue in range(len(sh)):
+                try:
+                    sh[aue] = str(floats[sh[aue]])
+                except BaseException:
+                    pass
+                try:
+                    sh[aue] = strings[sh[aue]]
+                except BaseException:
+                    pass
+            if eval(" ".join(sh)) == True:
+                i = int(command[1]) - 1
+
+
+        elif command[0] == 'liebiao':
+            for jk in range(1, len(command), 3):
+                arrays[command[jk]] = [0 for uuuu in range(  int(command[jk + 2][:-1])   )   ] 
+            
+
+        else:
+            sh = command[2:]
+            sh[-1] = sh[-1][0:-1]
+            for aue in range(len(sh)):
+                try:
+                    sh[aue] = str(floats[sh[aue]])
+                except BaseException:
+                    pass
+                try:
+                    sh[aue] = strings[sh[aue]]
+                except BaseException:
+                    pass
+            if command[0][-1] == ']':
+                if str(command[0][command[0].index('[') + 1:command[0].index(']')]) in list(floats.keys()):
+                    #command[0][command[0].index('[') + 1:command[0].index(']')] = int(floats[ str(command[0][command[0].index('[') + 1:command[0].index(']')]) ])
+                    #print(command[0][:command[0].index('[') + 1] + str(floats[ str(command[0][command[0].index('[') + 1:command[0].index(']')]) ]) + ']')
+                    command[0] = command[0][:command[0].index('[') + 1] + str(int(floats[ str(command[0][command[0].index('[') + 1:command[0].index(']')]) ])) + ']'
+
+                arrays[ command[0][:command[0].index('[')] ][ int(command[0][command[0].index('[') + 1] )]  = eval(" ".join(sh))
+            elif command[0] in list(floats.keys()):
+                floats[command[0]] = eval(" ".join(sh))
+            else:
+                strings[command[0]] = " ".join(sh)
+                
+        i += 1
+            
+            
+
+#print(arrays)
+
+
+
+
+
+# example:
+# ching chon chang chi ching chan chi chuo
+# hui c = 0, a = 3;
+# xi_piang S = 'name';
+# liebiao piang : 10;
+
+# piang[c] = a;
+# a = a + 3;
+# c = c + 1;
+# guodu 4 c < 10;
+# dayin piang;
